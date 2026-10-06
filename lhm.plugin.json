@@ -4,7 +4,7 @@
   "cloudEndpoint": "https://gigngo.org/mcp",
   "description": "Find a US local for a home job or errand, watch videos of their real work, and draft a job post the person reviews and posts themselves. Remote MCP server, free, no sign-in.",
   "homepage": "https://gigngo.org/mcp-server",
-  "identifier": "gigngo",
+  "identifier": "cameronsoccer-gigngo-mcp",
   "name": "GigNGo: US locals for home jobs and errands",
   "prompts": [],
   "resources": [],
