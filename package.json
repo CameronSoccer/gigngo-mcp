@@ -1,0 +1,9 @@
+{
+  "name": "gigngo-mcp",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Find a US local for a home job or errand, watch videos of their real work, and draft a job post the person reviews and posts themselves. Remote MCP server, free, no sign-in.",
+  "homepage": "https://gigngo.org/mcp-server",
+  "repository": { "type": "git", "url": "https://github.com/CameronSoccer/gigngo-mcp" },
+  "keywords": ["mcp", "local-services", "errands", "home-services", "hire-a-human", "gigngo"]
+}

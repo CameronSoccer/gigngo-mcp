@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "org.gigngo/gigngo",
+  "title": "GigNGo: US locals for home jobs and errands",
+  "description": "Find a US local for a home job or errand, watch their filmed work, draft a post the person confirms",
+  "version": "1.0.1",
+  "websiteUrl": "https://gigngo.org/mcp-server",
+  "icons": [
+    {
+      "src": "https://gigngo.org/images/logo.png",
+      "mimeType": "image/png"
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://gigngo.org/mcp"
+    }
+  ]
+}

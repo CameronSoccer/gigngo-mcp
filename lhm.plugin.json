@@ -1,0 +1,337 @@
+{
+  "author": "GigNGo",
+  "authorUrl": "https://gigngo.org",
+  "cloudEndpoint": "https://gigngo.org/mcp",
+  "description": "Find a US local for a home job or errand, watch videos of their real work, and draft a job post the person reviews and posts themselves. Remote MCP server, free, no sign-in.",
+  "homepage": "https://gigngo.org/mcp-server",
+  "identifier": "gigngo",
+  "name": "GigNGo: US locals for home jobs and errands",
+  "prompts": [],
+  "resources": [],
+  "tags": [
+    "mcp",
+    "local-services",
+    "errands",
+    "home-services",
+    "hire-a-human",
+    "gigngo"
+  ],
+  "tools": [
+    {
+      "name": "search_local_workers",
+      "title": "Find locals",
+      "description": "Find a real person near someone in the US who does a kind of home job or errand: assembly, yard work, cleaning, moving help, hauling, small repairs, pickups. Searches locals on GigNGo by service and place. Returns public profiles: name, bio, skills, prices the local set, reviews, whether they filmed their work (filmedTheirWork, workVideoCount), neighbor vouches, service area and profile URL. With a city, locals listed on that town's GigNGo area page come first (relation \"in\", \"serves\" or \"nearby\", with miles), then locals in that town, ordered so those who filmed their work come first. Badges are self-reported. Use list_service_categories first if you are unsure of the service slug. State is the full state name in lowercase with hyphens (e.g. \"new-york\", \"north-carolina\"); city likewise (e.g. \"los-angeles\"). Returns up to `limit` locals per page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "Service category slug, e.g. \"house-cleaning\", \"handyman\", \"lawn-care\"."
+          },
+          "state": {
+            "type": "string",
+            "description": "Full US state name, lowercase, hyphens for spaces. Example: \"new-york\"."
+          },
+          "city": {
+            "type": "string",
+            "description": "Optional city name, lowercase, hyphens for spaces. Example: \"san-francisco\"."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Max locals to return (1-50, default 20).",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "required": [
+          "service",
+          "state"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_worker_profile",
+      "title": "Read a local's profile",
+      "description": "Get the public profile of one GigNGo local by their profile slug. Returns name, bio, skills, prices the local set, reviews, whether they filmed their work, neighbor vouches, self-reported badges, service area, availability, a profile URL and `limits` (GigNGo runs no background checks). Slugs come from search_local_workers results (the \"slug\" field) or from gigngo.org/worker-profile/{slug} URLs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "The local's profile slug, e.g. \"john-smith-handyman-orlando\"."
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_work_record",
+      "title": "Read a local's Work Record",
+      "description": "Get a local's Work Record: evidence of their work, where every item says how GigNGo knows it. Evidence types: filmed (clips our check says show the work, not who is in them), homeowner_confirmed / local_reported / inferred_from_messages (finished jobs, counted), neighbor_vouched, recorded_on_gigngo (reviews, member since) and self_reported (badges). Weigh each evidence type separately; never reduce the record to one score. GigNGo runs no background checks. Not for employment, credit, insurance or tenancy decisions. Use the \"slug\" from search_local_workers or get_worker_profile as the handle.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string",
+            "description": "The local's public handle or profile slug, e.g. \"juan-lopez-handyman\"."
+          }
+        },
+        "required": [
+          "handle"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "find_work_clips",
+      "title": "Find videos of locals doing a job",
+      "description": "Find short videos of locals doing a kind of job, e.g. \"deck building\", \"pressure washing\", \"house cleaning\". Every clip was checked to show someone actually doing the work. Returns a watch page URL (link people there), an embed URL, the local's first name and town, the job's search words, and the local's profile. With a city or state, clips from that town come first (where: \"town\"), then that state (\"state\"), then anywhere (\"elsewhere\") \u2014 say which when you show one. A clip shows how someone works, not who they are: GigNGo runs no background checks. Pass on the `limits` field.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "job": {
+            "type": "string",
+            "description": "The job in a few words, e.g. \"deck staining\", \"furnace repair\"."
+          },
+          "city": {
+            "type": "string",
+            "description": "Optional city, lowercase, hyphens for spaces. Example: \"grand-rapids\"."
+          },
+          "state": {
+            "type": "string",
+            "description": "Optional US state, full name (\"michigan\") or code (\"MI\")."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Max clips (1-20, default 8).",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "job"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "draft_job_post",
+      "title": "Draft a job post for someone to confirm",
+      "description": "Use this when someone needs a local to do a job or errand for them (put furniture together, mow a lawn, help move, pick something up, wait in line) and wants it posted. Draft the job post and get back a link THEY open to review and post it. Posting is free. You cannot hire, book or pay anyone through this tool: the person posts the job, locals nearby decide whether to offer, and the person chooses who to hire. GigNGo never posts on anyone's behalf: this writes nothing. The draft is run through the same screens a real post faces, so if it reads as vague, as an advert, as a job advert or as a known scam pattern you get the reason back and can fix it before handing the person a link. Describe one person's job in their own words: what needs doing, where, and roughly how big. GigNGo runs no background checks; say so when you hand over the link.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The job in the homeowner's words, 12-1000 characters."
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional short title, e.g. \"Fence repair\"."
+          },
+          "category": {
+            "type": "string",
+            "description": "Optional service slug or id. See list_service_categories."
+          },
+          "city": {
+            "type": "string",
+            "description": "Optional city, e.g. \"Saginaw\"."
+          },
+          "state": {
+            "type": "string",
+            "description": "Optional US state, e.g. \"michigan\" or \"MI\"."
+          }
+        },
+        "required": [
+          "description"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_service_categories",
+      "title": "List services",
+      "description": "List all 30 GigNGo service categories with their slugs (e.g. \"house-cleaning\", \"electrician\", \"moving-help\"). Call this to discover valid values for the `service` parameter of search_local_workers and the `category` parameter of browse_open_tasks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "check_service_availability",
+      "title": "Check which services have locals",
+      "description": "Check which of the 30 service categories have public locals in a US state or city, with a count per service. Useful before searching, or to answer \"can I get X done in Y?\". State is required (full name, lowercase, hyphens: \"new-jersey\"); city is optional \u2014 omit it for state-level availability.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Full US state name, lowercase, hyphens for spaces. Example: \"florida\"."
+          },
+          "city": {
+            "type": "string",
+            "description": "Optional city name, lowercase, hyphens for spaces. Example: \"orlando\". Omit for state-wide availability."
+          }
+        },
+        "required": [
+          "state"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "browse_open_tasks",
+      "title": "Browse open jobs",
+      "description": "Browse open jobs homeowners have posted on GigNGo that locals can apply to. Each task includes title, description, `details` (the poster's Additional Details note, present on most jobs and usually the most specific part), category, budget, approximate location (coordinates are privacy-offset), when it was posted (postedAt, ageHours, ageDays, postedAgo), how many locals have applied (applicantCount, hasApplicants) and how fast the first one did (hoursToFirstApplicant), plus a link to apply. Filter by category, state, city, age or applicant count, and sort by newest, oldest, most_applicants or fewest_applicants. All filters are optional \u2014 call with no arguments for the most recent open tasks nationwide.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Optional service category slug, e.g. \"moving-help\". See list_service_categories."
+          },
+          "state": {
+            "type": "string",
+            "description": "Optional full US state name, lowercase, hyphens for spaces. Example: \"pennsylvania\"."
+          },
+          "city": {
+            "type": "string",
+            "description": "Optional city slug, lowercase with hyphens. Example: \"los-angeles\"."
+          },
+          "sort": {
+            "type": "string",
+            "description": "Order of results. \"oldest\" surfaces the jobs that have been waiting longest (the ones about to be abandoned); \"most_applicants\" surfaces where locals are actually competing.",
+            "enum": [
+              "newest",
+              "oldest",
+              "most_applicants",
+              "fewest_applicants",
+              "priority"
+            ]
+          },
+          "maxAgeDays": {
+            "type": "integer",
+            "description": "Only tasks posted within this many days.",
+            "minimum": 1,
+            "maximum": 365
+          },
+          "unanswered": {
+            "type": "boolean",
+            "description": "Only tasks with zero applicants so far \u2014 the unfilled queue."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Max tasks to return (1-50, default 20).",
+            "minimum": 1,
+            "maximum": 50
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_area_demand_density",
+      "title": "See where jobs get answered",
+      "description": "Find which US cities are actually converting: how many jobs each area posted, how many locals applied, what share of jobs got any reply at all, and the median hours to the first applicant. Ranked by a \"heat\" score that combines applicant density with response reliability, shrunk toward the platform average so a single lucky job cannot outrank a real market \u2014 read `heat` next to `confidence`. Use this to decide where supply is dense (spend more) versus where jobs go unanswered (a supply hole). Complements check_service_availability, which counts locals rather than measuring whether they respond.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Optional state filter \u2014 full name or two-letter code, e.g. \"texas\" or \"TX\"."
+          },
+          "minJobs": {
+            "type": "integer",
+            "description": "Only areas with at least this many jobs in the window. Use 5+ for a shortlist of established markets; smaller areas are real but weigh less as evidence.",
+            "minimum": 1
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "heat",
+              "applicants",
+              "responseRate",
+              "openUnanswered",
+              "jobs",
+              "confidence"
+            ],
+            "description": "Ranking. \"openUnanswered\" surfaces supply holes instead of hot markets."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Max areas to return (1-300, default 50).",
+            "minimum": 1,
+            "maximum": 300
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_platform_info",
+      "title": "About GigNGo",
+      "description": "Get an overview of GigNGo: what it is, what it does not do (limits), service category count, how jobs reach locals, iOS/Android app links, and API documentation URLs. Call this for general \"what is GigNGo\" questions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "version": "1.1.0"
+}
