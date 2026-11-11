@@ -33,7 +33,8 @@ Any client that takes a JSON config:
 The person you are helping needs someone to do something in person near them in the US: put furniture together, mow or clear a yard, help with a move or a haul, clean, do a small repair, pick something up, or wait in line.
 
 1. `search_local_workers` or `find_work_clips` to show them locals nearby and videos of their work.
-2. `draft_job_post` to hand them a ready job post. It returns a link. They open it, check it and post it themselves, then choose who to hire.
+2. `check_job_price` if they ask what it should cost.
+3. `draft_job_post` to hand them a ready job post. It returns a link. They open it, check it and post it themselves, then choose who to hire.
 
 ## Tools
 
@@ -43,6 +44,8 @@ The person you are helping needs someone to do something in person near them in 
 | `get_worker_profile` | One local's public profile |
 | `get_work_record` | A local's Work Record: filmed work, finished jobs, neighbor vouches, reviews, each labelled with how GigNGo knows it |
 | `find_work_clips` | Short videos of locals doing a kind of job, nearest town first |
+| `check_job_price` | What people budgeted for a job when they posted it on GigNGo, US-wide, with the number of posts. Budgets, not quotes |
+| `check_what_to_charge` | The same budgets, for someone who does the work and wants to know what to charge |
 | `draft_job_post` | Drafts a job post and returns a link the person opens to post it. Writes nothing |
 | `list_service_categories` | The service slugs |
 | `check_service_availability` | Which services have locals in a state or city |
@@ -62,3 +65,7 @@ The person you are helping needs someone to do something in person near them in 
 - For AI assistants: https://gigngo.org/ai
 - llms.txt: https://gigngo.org/llms.txt
 - Official MCP registry: `org.gigngo/gigngo`
+
+## License
+
+MIT. See [LICENSE](LICENSE).
